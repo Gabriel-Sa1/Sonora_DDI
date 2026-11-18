@@ -6,7 +6,7 @@ Aplicação web responsiva de streaming de áudio **sem direitos autorais (royal
 
 ## 🔗 Acesso à Aplicação Hospedada (GitHub Pages)
 
-👉 **Acesse o sistema online:** [https://gabriel-sa1.github.io/projeto/](https://gabriel-sa1.github.io/projeto/)](https://gabriel-sa1.github.io/Sonora_DDI/)
+👉 **Acesse o sistema online:** [](https://gabriel-sa1.github.io/Sonora_DDI/)
 
 ---
 
