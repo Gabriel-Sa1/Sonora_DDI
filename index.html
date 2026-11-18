@@ -595,6 +595,111 @@
       box-shadow: 0 3px 10px rgba(216, 0, 115, 0.25);
     }
 
+    /* Hero Banner Institucional CEUB */
+    .hero-banner {
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      background: linear-gradient(125deg, #2e003e 0%, #58085c 52%, #d80073 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-info {
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.16);
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-desc {
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.5;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .btn-hero-play {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: var(--radius-pill);
+      background-color: #ffffff;
+      color: #2e003e;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .btn-hero-play:hover {
+      transform: scale(1.04);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .btn-hero-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: var(--radius-pill);
+      background-color: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition: background-color var(--transition);
+    }
+
+    .btn-hero-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.26);
+    }
+
     /* Seções e Títulos */
     .section-header {
       display: flex;
@@ -943,20 +1048,6 @@
       font-variant-numeric: tabular-nums;
     }
 
-    .hero-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      width: fit-content;
-      padding: 4px 12px;
-      border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, 0.16);
-      font-size: 0.74rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
     /* ==========================================================================
        7. VIEWS ESPECÍFICAS (BIBLIOTECA, MODO FOCO, PAINEL DO GERENTE)
        ========================================================================== */
@@ -1141,6 +1232,7 @@
       box-shadow: 0 0 0 3px rgba(216, 0, 115, 0.16);
     }
 
+    /* Dropdown <select> e <option> estilizados para Modo Escuro e Claro */
     select.form-control {
       appearance: none;
       -webkit-appearance: none;
@@ -1459,6 +1551,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      touch-action: none;
     }
 
     .progress-bar-container:hover {
@@ -1687,6 +1780,9 @@
     }
 
     @media (max-width: 768px) {
+      :root {
+        --player-height: calc(130px + env(safe-area-inset-bottom, 0px));
+      }
       .app-shell {
         grid-template-columns: 1fr;
       }
@@ -1707,23 +1803,160 @@
       }
       .mobile-menu-btn {
         display: grid;
+        flex-shrink: 0;
       }
       .topbar {
-        padding: 10px 16px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 10px 14px;
+        gap: 10px 8px;
+      }
+      .topbar-left {
+        display: contents;
+      }
+      .topbar .mobile-menu-btn {
+        order: 1;
+      }
+      .topbar-actions {
+        order: 2;
+        margin-left: auto;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .topbar-actions .action-pill {
+        padding: 8px 11px;
+      }
+      .search-box {
+        order: 3;
+        flex: 1 1 100%;
+        width: 100%;
+      }
+      .search-box svg {
+        left: 13px;
+      }
+      .search-input {
+        padding: 9px 34px 9px 36px;
+        font-size: 0.86rem;
       }
       .content-container {
-        padding: 16px 16px 40px;
+        padding: 16px 16px 36px;
       }
+      .hero-banner {
+        padding: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .hero-title {
+        font-size: 1.35rem;
+      }
+      .pomodoro-clock {
+        font-size: 3.4rem;
+      }
+      .toast-container {
+        left: 14px;
+        right: 14px;
+      }
+      .toast {
+        max-width: 100%;
+      }
+
+      /* Player Mobile Redesenhado em 2 Linhas (proporcional ao PC, sem espremer) */
       .player-bar {
         grid-template-columns: 1fr auto;
-        padding: 0 14px;
+        grid-template-rows: auto auto;
+        padding: 9px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+        gap: 7px 10px;
+        align-items: center;
       }
-      .player-center .progress-row,
+      .player-now-playing {
+        grid-row: 1;
+        grid-column: 1;
+        gap: 10px;
+        min-width: 0;
+      }
+      .player-cover {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+      }
+      .player-track-title {
+        font-size: 0.86rem;
+      }
+      .player-track-artist {
+        font-size: 0.74rem;
+      }
+      .player-now-playing .icon-action {
+        width: 34px;
+        height: 34px;
+        flex-shrink: 0;
+      }
       .player-right {
+        grid-row: 1;
+        grid-column: 2;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .player-right #muteBtn,
+      .player-right .volume-slider {
         display: none;
+      }
+      .player-right #toggleQueueBtn {
+        padding: 7px 11px;
+        min-height: 34px;
+        font-size: 0.85rem;
+      }
+      .player-center {
+        grid-row: 2;
+        grid-column: 1 / -1;
+        width: 100%;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 6px;
+      }
+      .player-center .progress-row {
+        display: flex;
+        width: 100%;
+        max-width: 100%;
+        gap: 8px;
+      }
+      .player-center .progress-bar-container {
+        height: 6px;
+      }
+      .player-center .time-label {
+        font-size: 0.68rem;
+        min-width: 32px;
+      }
+      .player-buttons {
+        width: 100%;
+        max-width: 340px;
+        margin: 0 auto;
+        justify-content: space-between;
+        gap: 6px;
+      }
+      .ctrl-btn {
+        width: 34px;
+        height: 34px;
+      }
+      .ctrl-btn-play {
+        width: 38px;
+        height: 38px;
       }
       .hide-mobile {
         display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .tracks-grid,
+      .library-tiles-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .track-card,
+      .library-tile-card {
+        padding: 10px;
+        gap: 9px;
       }
     }
   </style>
@@ -2205,7 +2438,6 @@
       <ul style="font-size: 0.88rem; color: var(--text-secondary); padding-left: 18px; display: flex; flex-direction: column; gap: 8px;">
         <li><strong>Barra de Espaço:</strong> Reproduz ou pausa a música atual (fora de campos de texto).</li>
         <li><strong>Tecla ESC:</strong> Fecha qualquer janela modal ou a gaveta lateral de fila.</li>
-        <li><strong>Playlists &amp; Repetição:</strong> Ao tocar uma playlist, clique 1x em <strong>↻</strong> para repetir a música atual ou 2x para repetir a playlist inteira. O botão <strong>⇄</strong> embaralha somente as músicas da playlist ativa.</li>
         <li><strong>Pasta <code>musicas/</code> no GitHub:</strong> Crie uma pasta chamada <code>musicas</code> no repositório, envie seus <code>.mp3</code> para lá e, no Painel do Gerente, digite apenas o nome do arquivo (ex: <code>on-and-on.mp3</code>).</li>
         <li><strong>Capas:</strong> Use um link direto terminado em <code>.jpg</code>/<code>.png</code> ou salve a capa na pasta e digite <code>capas/capa.jpg</code>.</li>
       </ul>
@@ -2256,6 +2488,7 @@
       }
     };
 
+    // Converte o nome digitado (ex: "on-and-on" ou "on-and-on.mp3") em "./musicas/on-and-on.mp3"
     function resolveFolderAudioUrl(rawInput) {
       let clean = (rawInput || '').trim();
       if (!clean) return '';
@@ -2264,8 +2497,10 @@
         return clean;
       }
 
+      // Remove prefixos redundantes caso o usuário digite "./musicas/" ou "musicas/"
       clean = clean.replace(/^\.?\//, '').replace(/^musicas\//i, '');
 
+      // Adiciona .mp3 automaticamente se nenhuma extensão de áudio foi informada
       if (!/\.(mp3|wav|ogg|m4a|aac)$/i.test(clean)) {
         clean += '.mp3';
       }
@@ -2323,6 +2558,7 @@
         return trimmed.replace(/[?&]dl=0/, '?raw=1').replace(/[?&]dl=1/, '?raw=1');
       }
 
+      // Suporte a caminho relativo local no repositório (ex: "capas/capa.jpg" ou "musicas/capa.jpg")
       if (!/^https?:\/\//i.test(trimmed) && !trimmed.startsWith('data:') && !trimmed.startsWith('blob:')) {
         const cleanRel = trimmed.replace(/^\.?\//, '');
         return `./${cleanRel}`;
@@ -2709,6 +2945,7 @@
         const currentToken = this.attemptToken;
         if (resetTime) state.currentTime = 0;
 
+        // Retomada instantânea sem recarregar o arquivo (evita engasgo/tilt ao pausar e despausar)
         if (!resetTime && this.mode === 'html' && this.loadedTrackId === track.id && this.htmlAudio.currentSrc) {
           this.setVolume(state.volume);
           this.htmlAudio.play().catch(() => {
@@ -2828,7 +3065,7 @@
     const audioEngine = new HybridAudioEngine();
 
     /* ========================================================================
-       5. FUNÇÕES UTILITÁRIAS & CONTEXTO DE PLAYLIST
+       5. FUNÇÕES UTILITÁRIAS & FEEDBACK
        ======================================================================== */
     function getTrackById(id) {
       return state.tracks.find(t => t.id === id) || null;
@@ -2913,7 +3150,7 @@
     }
 
     /* ========================================================================
-       6. CONTROLE DO PLAYER, REPETIÇÃO E ALEATÓRIO NA PLAYLIST
+       6. CONTROLE DO PLAYER & FILA DE REPRODUÇÃO
        ======================================================================== */
     function updateRepeatButtonUI() {
       const repeatBtn = document.getElementById('repeatBtn');
@@ -2946,7 +3183,6 @@
 
       state.playbackContext = nextContext;
 
-      // Se saiu de uma playlist para o catálogo geral, reseta o modo de repetir playlist
       if (!isInPlaylistContext() && state.repeatMode === 'playlist') {
         state.repeatMode = 'off';
       }
@@ -3073,7 +3309,6 @@
       const inPlaylist = isInPlaylistContext();
 
       if (state.isShuffle) {
-        // Quando está no fim automático sem repetir playlist, para após tocar todas as faixas da playlist
         const allowWrap = !fromAutoEnd || !inPlaylist || state.repeatMode === 'playlist';
         const nextShuffle = pickNextShuffleTrack(pool, allowWrap);
         if (!nextShuffle) {
@@ -3232,6 +3467,7 @@
         : state.tracks.filter(t => t.category === state.currentCategory);
       const categoryPool = basePool.length > 0 ? basePool : state.tracks;
 
+      // Exclui faixas que já estão em "Tocados Recentemente" para nunca repetir
       const pool = categoryPool.filter(t => !state.recentIds.includes(t.id));
 
       if (pool.length > 0 && !state.searchQuery) {
@@ -3916,9 +4152,18 @@
         });
       });
 
-      // Busca Instantânea
+      // Busca Instantânea & Placeholder Adaptável
       const searchInput = document.getElementById('globalSearchInput');
       const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+      const updateSearchPlaceholder = () => {
+        searchInput.placeholder = window.innerWidth <= 420
+          ? 'Buscar músicas, artistas ou podcasts...'
+          : 'Buscar músicas, artistas ou podcasts CEUB...';
+      };
+      updateSearchPlaceholder();
+      window.addEventListener('resize', updateSearchPlaceholder);
+
       searchInput.addEventListener('input', (e) => {
         state.searchQuery = e.target.value;
         clearSearchBtn.classList.toggle('visible', state.searchQuery.length > 0);
@@ -3975,8 +4220,6 @@
       });
 
       document.getElementById('repeatBtn').addEventListener('click', () => {
-        // Se o usuário está visualizando uma playlist na Biblioteca, mas ainda não deu play nela,
-        // vincula o contexto daquela playlist caso ela possua músicas para o 2º clique funcionar intuitivamente.
         if (
           !isInPlaylistContext() &&
           state.activeView === 'library' &&
@@ -4014,17 +4257,46 @@
         renderQueue();
       });
 
-      // Barra de Progresso Clicável
-      document.getElementById('progressContainer').addEventListener('click', (e) => {
-        const track = getTrackById(state.currentTrackId);
-        if (!track) return;
-        const rect = e.currentTarget.getBoundingClientRect();
-        const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        const totalDur = (audioEngine.mode === 'html' && !isNaN(audioEngine.htmlAudio.duration) && isFinite(audioEngine.htmlAudio.duration))
-          ? audioEngine.htmlAudio.duration
-          : track.duration;
-        audioEngine.seek(pct * totalDur);
-      });
+      // Barra de Progresso Clicável e Arrastável (Desktop + Touch Mobile)
+      (() => {
+        const progressEl = document.getElementById('progressContainer');
+        let isScrubbing = false;
+
+        const seekFromClientX = (clientX) => {
+          const track = getTrackById(state.currentTrackId);
+          if (!track) return;
+          const rect = progressEl.getBoundingClientRect();
+          const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+          const totalDur = (audioEngine.mode === 'html' && !isNaN(audioEngine.htmlAudio.duration) && isFinite(audioEngine.htmlAudio.duration))
+            ? audioEngine.htmlAudio.duration
+            : track.duration;
+          audioEngine.seek(pct * totalDur);
+        };
+
+        progressEl.addEventListener('pointerdown', (e) => {
+          isScrubbing = true;
+          if (progressEl.setPointerCapture) {
+            try { progressEl.setPointerCapture(e.pointerId); } catch (_) {}
+          }
+          seekFromClientX(e.clientX);
+        });
+
+        progressEl.addEventListener('pointermove', (e) => {
+          if (!isScrubbing) return;
+          seekFromClientX(e.clientX);
+        });
+
+        const endScrub = (e) => {
+          if (!isScrubbing) return;
+          isScrubbing = false;
+          if (progressEl.releasePointerCapture) {
+            try { progressEl.releasePointerCapture(e.pointerId); } catch (_) {}
+          }
+        };
+
+        progressEl.addEventListener('pointerup', endScrub);
+        progressEl.addEventListener('pointercancel', endScrub);
+      })();
 
       // Controle de Volume Real
       const volSlider = document.getElementById('volumeSlider');
