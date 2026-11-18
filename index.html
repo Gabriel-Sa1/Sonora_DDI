@@ -595,111 +595,6 @@
       box-shadow: 0 3px 10px rgba(216, 0, 115, 0.25);
     }
 
-    /* Hero Banner Institucional CEUB */
-    .hero-banner {
-      border-radius: var(--radius-lg);
-      padding: 28px 32px;
-      background: linear-gradient(125deg, #2e003e 0%, #58085c 52%, #d80073 100%);
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      box-shadow: var(--shadow-md);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-banner::after {
-      content: "";
-      position: absolute;
-      right: -40px;
-      top: -40px;
-      width: 240px;
-      height: 240px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);
-      pointer-events: none;
-    }
-
-    .hero-info {
-      max-width: 600px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 1;
-    }
-
-    .hero-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      width: fit-content;
-      padding: 4px 12px;
-      border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, 0.16);
-      font-size: 0.74rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    .hero-title {
-      font-size: 1.75rem;
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-    }
-
-    .hero-desc {
-      font-size: 0.92rem;
-      color: rgba(255, 255, 255, 0.88);
-      line-height: 1.5;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 6px;
-    }
-
-    .btn-hero-play {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 11px 22px;
-      border-radius: var(--radius-pill);
-      background-color: #ffffff;
-      color: #2e003e;
-      font-weight: 700;
-      font-size: 0.9rem;
-      transition: transform var(--transition), box-shadow var(--transition);
-    }
-
-    .btn-hero-play:hover {
-      transform: scale(1.04);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    }
-
-    .btn-hero-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 11px 20px;
-      border-radius: var(--radius-pill);
-      background-color: rgba(255, 255, 255, 0.16);
-      color: #ffffff;
-      font-weight: 600;
-      font-size: 0.9rem;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      transition: background-color var(--transition);
-    }
-
-    .btn-hero-secondary:hover {
-      background-color: rgba(255, 255, 255, 0.26);
-    }
-
     /* Seções e Títulos */
     .section-header {
       display: flex;
@@ -937,9 +832,15 @@
       border-color: var(--border-strong);
     }
 
-    .library-tile-card:hover .card-play-fab {
+    .library-tile-card:hover .card-play-fab,
+    .library-tile-card.playing .card-play-fab {
       opacity: 1;
       transform: translateY(0);
+    }
+
+    .library-tile-card.playing {
+      border-color: var(--ceub-magenta-500);
+      box-shadow: 0 0 0 1px var(--ceub-magenta-500), var(--shadow-md);
     }
 
     .library-tile-cover {
@@ -1042,6 +943,20 @@
       font-variant-numeric: tabular-nums;
     }
 
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.16);
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
     /* ==========================================================================
        7. VIEWS ESPECÍFICAS (BIBLIOTECA, MODO FOCO, PAINEL DO GERENTE)
        ========================================================================== */
@@ -1053,6 +968,13 @@
 
     .view-panel.active {
       display: flex;
+    }
+
+    .playlist-title-edit-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .track-table {
@@ -1093,6 +1015,10 @@
 
     .track-table tbody tr:hover {
       background-color: var(--bg-surface-hover);
+    }
+
+    .track-table tbody tr.playing-row {
+      background-color: rgba(216, 0, 115, 0.12);
     }
 
     .table-track-info {
@@ -1215,7 +1141,6 @@
       box-shadow: 0 0 0 3px rgba(216, 0, 115, 0.16);
     }
 
-    /* Dropdown <select> e <option> estilizados para Modo Escuro e Claro */
     select.form-control {
       appearance: none;
       -webkit-appearance: none;
@@ -1449,6 +1374,7 @@
       place-items: center;
       color: var(--text-secondary);
       transition: all var(--transition);
+      position: relative;
     }
 
     .ctrl-btn:hover {
@@ -1458,6 +1384,38 @@
 
     .ctrl-btn.active {
       color: var(--ceub-magenta-500);
+      background-color: rgba(216, 0, 115, 0.14);
+    }
+
+    .ctrl-btn.repeat-one::after {
+      content: "1";
+      position: absolute;
+      top: 1px;
+      right: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: var(--ceub-magenta-500);
+      color: #ffffff;
+      font-size: 0.6rem;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      line-height: 1;
+    }
+
+    .ctrl-btn.repeat-playlist::after {
+      content: "PL";
+      position: absolute;
+      top: 0px;
+      right: -2px;
+      padding: 1px 4px;
+      border-radius: 999px;
+      background-color: var(--ceub-magenta-500);
+      color: #ffffff;
+      font-size: 0.54rem;
+      font-weight: 800;
+      line-height: 1.1;
     }
 
     .ctrl-btn-play {
@@ -1756,14 +1714,6 @@
       .content-container {
         padding: 16px 16px 40px;
       }
-      .hero-banner {
-        padding: 20px;
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .hero-title {
-        font-size: 1.35rem;
-      }
       .player-bar {
         grid-template-columns: 1fr auto;
         padding: 0 14px;
@@ -1914,11 +1864,20 @@
                 ← Biblioteca
               </button>
               <div>
-                <h2 class="section-title" id="libraryTitle">Sua Biblioteca</h2>
+                <div class="playlist-title-edit-row">
+                  <h2 class="section-title" id="libraryTitle">Sua Biblioteca</h2>
+                  <button class="btn-icon-sm" id="inlineRenamePlaylistBtn" style="display: none;" title="Editar nome da playlist" aria-label="Editar nome da playlist">✎</button>
+                </div>
                 <p class="section-subtitle" id="librarySubtitle">Suas músicas favoritas e playlists personalizadas</p>
               </div>
             </div>
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+              <button class="action-pill primary" id="playCurrentPlaylistBtn" style="display: none;" title="Tocar esta playlist">
+                ▶ Tocar Playlist
+              </button>
+              <button class="action-pill" id="renameCurrentPlaylistBtn" style="display: none;" title="Editar nome desta playlist">
+                ✎ Editar Nome
+              </button>
               <button class="action-pill" id="deleteCurrentPlaylistBtn" style="display: none; border-color: #ef4444; color: #ef4444;">
                 🗑 Excluir Playlist
               </button>
@@ -2087,7 +2046,7 @@
         <h3 class="modal-title">A Seguir (Fila)</h3>
         <button class="btn-icon-sm" id="closeQueueBtn" title="Fechar fila (ESC)" aria-label="Fechar fila">✕</button>
       </div>
-      <p class="section-subtitle">Clique em uma música da fila para tocar agora</p>
+      <p class="section-subtitle" id="queueContextSubtitle">Clique em uma música da fila para tocar agora</p>
       <div class="queue-list" id="queueList"></div>
     </aside>
 
@@ -2115,7 +2074,7 @@
           <button class="ctrl-btn" id="prevBtn" title="Faixa anterior">⏮</button>
           <button class="ctrl-btn-play" id="playPauseBtn" title="Reproduzir / Pausar (Barra de Espaço)" aria-label="Reproduzir ou Pausar">▶</button>
           <button class="ctrl-btn" id="nextBtn" title="Próxima faixa">⏭</button>
-          <button class="ctrl-btn" id="repeatBtn" title="Repetir faixa atual">↻</button>
+          <button class="ctrl-btn" id="repeatBtn" title="Repetir: Desativado (1x música, 2x playlist)">↻</button>
         </div>
 
         <div class="progress-row">
@@ -2210,6 +2169,22 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="renamePlaylistModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Nome da Playlist</h3>
+        <button class="btn-icon-sm" data-close-modal="renamePlaylistModal" title="Fechar (ESC)">✕</button>
+      </div>
+      <form id="renamePlaylistForm" style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="form-group">
+          <label for="renamePlaylistInput">Novo Nome da Playlist *</label>
+          <input type="text" id="renamePlaylistInput" class="form-control" placeholder="Ex: Foco Total — Semestre 2026" />
+        </div>
+        <button type="submit" class="btn-submit" id="confirmRenamePlaylistBtn">Salvar Novo Nome</button>
+      </form>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="addToPlaylistModal" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-header">
@@ -2230,6 +2205,7 @@
       <ul style="font-size: 0.88rem; color: var(--text-secondary); padding-left: 18px; display: flex; flex-direction: column; gap: 8px;">
         <li><strong>Barra de Espaço:</strong> Reproduz ou pausa a música atual (fora de campos de texto).</li>
         <li><strong>Tecla ESC:</strong> Fecha qualquer janela modal ou a gaveta lateral de fila.</li>
+        <li><strong>Playlists &amp; Repetição:</strong> Ao tocar uma playlist, clique 1x em <strong>↻</strong> para repetir a música atual ou 2x para repetir a playlist inteira. O botão <strong>⇄</strong> embaralha somente as músicas da playlist ativa.</li>
         <li><strong>Pasta <code>musicas/</code> no GitHub:</strong> Crie uma pasta chamada <code>musicas</code> no repositório, envie seus <code>.mp3</code> para lá e, no Painel do Gerente, digite apenas o nome do arquivo (ex: <code>on-and-on.mp3</code>).</li>
         <li><strong>Capas:</strong> Use um link direto terminado em <code>.jpg</code>/<code>.png</code> ou salve a capa na pasta e digite <code>capas/capa.jpg</code>.</li>
       </ul>
@@ -2280,7 +2256,6 @@
       }
     };
 
-    // Converte o nome digitado (ex: "on-and-on" ou "on-and-on.mp3") em "./musicas/on-and-on.mp3"
     function resolveFolderAudioUrl(rawInput) {
       let clean = (rawInput || '').trim();
       if (!clean) return '';
@@ -2289,10 +2264,8 @@
         return clean;
       }
 
-      // Remove prefixos redundantes caso o usuário digite "./musicas/" ou "musicas/"
       clean = clean.replace(/^\.?\//, '').replace(/^musicas\//i, '');
 
-      // Adiciona .mp3 automaticamente se nenhuma extensão de áudio foi informada
       if (!/\.(mp3|wav|ogg|m4a|aac)$/i.test(clean)) {
         clean += '.mp3';
       }
@@ -2350,7 +2323,6 @@
         return trimmed.replace(/[?&]dl=0/, '?raw=1').replace(/[?&]dl=1/, '?raw=1');
       }
 
-      // Suporte a caminho relativo local no repositório (ex: "capas/capa.jpg" ou "musicas/capa.jpg")
       if (!/^https?:\/\//i.test(trimmed) && !trimmed.startsWith('data:') && !trimmed.startsWith('blob:')) {
         const cleanRel = trimmed.replace(/^\.?\//, '');
         return `./${cleanRel}`;
@@ -2475,7 +2447,9 @@
       currentTrackId: null,
       isPlaying: false,
       isShuffle: false,
-      isRepeat: false,
+      repeatMode: 'off', // 'off' | 'one' | 'playlist'
+      playbackContext: { type: 'all', id: null }, // 'all' | 'playlist' | 'liked'
+      shufflePlayedIds: [],
       volume: 0.8,
       isMuted: false,
       currentTime: 0,
@@ -2735,7 +2709,6 @@
         const currentToken = this.attemptToken;
         if (resetTime) state.currentTime = 0;
 
-        // Retomada instantânea sem recarregar o arquivo (evita engasgo/tilt ao pausar e despausar)
         if (!resetTime && this.mode === 'html' && this.loadedTrackId === track.id && this.htmlAudio.currentSrc) {
           this.setVolume(state.volume);
           this.htmlAudio.play().catch(() => {
@@ -2855,10 +2828,38 @@
     const audioEngine = new HybridAudioEngine();
 
     /* ========================================================================
-       5. FUNÇÕES UTILITÁRIAS & FEEDBACK
+       5. FUNÇÕES UTILITÁRIAS & CONTEXTO DE PLAYLIST
        ======================================================================== */
     function getTrackById(id) {
       return state.tracks.find(t => t.id === id) || null;
+    }
+
+    function isInPlaylistContext() {
+      return state.playbackContext && (state.playbackContext.type === 'playlist' || state.playbackContext.type === 'liked');
+    }
+
+    function getActivePlaybackTracks() {
+      if (state.playbackContext.type === 'playlist') {
+        const pl = state.playlists.find(p => p.id === state.playbackContext.id);
+        if (pl) {
+          return pl.trackIds.map(id => getTrackById(id)).filter(Boolean);
+        }
+        state.playbackContext = { type: 'all', id: null };
+      } else if (state.playbackContext.type === 'liked') {
+        return state.likedIds.map(id => getTrackById(id)).filter(Boolean);
+      }
+      return state.tracks;
+    }
+
+    function getActiveContextLabel() {
+      if (state.playbackContext.type === 'playlist') {
+        const pl = state.playlists.find(p => p.id === state.playbackContext.id);
+        return pl ? `Playlist: ${pl.name}` : 'Catálogo Geral';
+      }
+      if (state.playbackContext.type === 'liked') {
+        return 'Músicas Favoritas';
+      }
+      return 'Catálogo Geral';
     }
 
     function formatTime(sec) {
@@ -2912,37 +2913,124 @@
     }
 
     /* ========================================================================
-       6. CONTROLE DO PLAYER & FILA DE REPRODUÇÃO
+       6. CONTROLE DO PLAYER, REPETIÇÃO E ALEATÓRIO NA PLAYLIST
        ======================================================================== */
-    function playTrackById(id) {
+    function updateRepeatButtonUI() {
+      const repeatBtn = document.getElementById('repeatBtn');
+      if (!repeatBtn) return;
+
+      repeatBtn.classList.remove('active', 'repeat-one', 'repeat-playlist');
+
+      if (state.repeatMode === 'one') {
+        repeatBtn.classList.add('active', 'repeat-one');
+        repeatBtn.title = 'Repetindo música atual (clique novamente para repetir a playlist)';
+      } else if (state.repeatMode === 'playlist') {
+        repeatBtn.classList.add('active', 'repeat-playlist');
+        repeatBtn.title = 'Repetindo a playlist inteira (clique para desativar)';
+      } else {
+        repeatBtn.title = isInPlaylistContext()
+          ? 'Repetir: Desativado (1x música, 2x playlist)'
+          : 'Repetir faixa atual';
+      }
+    }
+
+    function playTrackById(id, contextOverride = null) {
       const track = getTrackById(id);
       if (!track) return;
 
+      const prevContext = state.playbackContext;
+      const nextContext = contextOverride || { type: 'all', id: null };
+      const contextChanged =
+        prevContext.type !== nextContext.type ||
+        prevContext.id !== nextContext.id;
+
+      state.playbackContext = nextContext;
+
+      // Se saiu de uma playlist para o catálogo geral, reseta o modo de repetir playlist
+      if (!isInPlaylistContext() && state.repeatMode === 'playlist') {
+        state.repeatMode = 'off';
+      }
+
+      if (contextChanged) {
+        state.shufflePlayedIds = [];
+      }
+
       const isSame = state.currentTrackId === id;
-      if (isSame && state.isPlaying) return;
+      if (isSame && state.isPlaying && !contextChanged) return;
 
       state.currentTrackId = id;
       state.isPlaying = true;
+
+      if (!state.shufflePlayedIds.includes(id)) {
+        state.shufflePlayedIds.push(id);
+      }
 
       state.recentIds = [id, ...state.recentIds.filter(item => item !== id)].slice(0, 4);
       saveState();
 
       audioEngine.playTrack(track, !isSame);
+      updateRepeatButtonUI();
       updatePlayerBarUI();
       renderAll();
     }
 
-    function toggleTrackById(id) {
-      if (state.currentTrackId === id) {
+    function toggleTrackById(id, contextOverride = null) {
+      const targetContext = contextOverride || { type: 'all', id: null };
+      const sameContext =
+        state.playbackContext.type === targetContext.type &&
+        state.playbackContext.id === targetContext.id;
+
+      if (state.currentTrackId === id && sameContext) {
         togglePlayPause();
       } else {
-        playTrackById(id);
+        playTrackById(id, targetContext);
       }
     }
 
+    window.playPlaylistContext = function(type, id = null, startIndex = 0) {
+      const ctx = { type, id };
+      let tracks = [];
+      if (type === 'playlist') {
+        const pl = state.playlists.find(p => p.id === id);
+        if (!pl) return;
+        tracks = pl.trackIds.map(tid => getTrackById(tid)).filter(Boolean);
+        if (tracks.length === 0) {
+          showToast(`A playlist "${pl.name}" ainda não possui músicas.`);
+          return;
+        }
+      } else if (type === 'liked') {
+        tracks = state.likedIds.map(tid => getTrackById(tid)).filter(Boolean);
+        if (tracks.length === 0) {
+          showToast('Você ainda não curtiu nenhuma música.');
+          return;
+        }
+      }
+
+      state.shufflePlayedIds = [];
+      let chosenTrack = tracks[startIndex] || tracks[0];
+      if (state.isShuffle && tracks.length > 1) {
+        chosenTrack = tracks[Math.floor(Math.random() * tracks.length)];
+      }
+      playTrackById(chosenTrack.id, ctx);
+    };
+
+    window.togglePlaylistContext = function(type, id = null) {
+      const isThisContextActive =
+        state.playbackContext.type === type &&
+        state.playbackContext.id === id &&
+        Boolean(state.currentTrackId);
+
+      if (isThisContextActive) {
+        togglePlayPause();
+      } else {
+        window.playPlaylistContext(type, id, 0);
+      }
+    };
+
     function togglePlayPause() {
       if (!state.currentTrackId) {
-        if (state.tracks.length > 0) playTrackById(state.tracks[0].id);
+        const pool = getActivePlaybackTracks();
+        if (pool.length > 0) playTrackById(pool[0].id, state.playbackContext);
         return;
       }
       const track = getTrackById(state.currentTrackId);
@@ -2957,36 +3045,96 @@
       renderAll();
     }
 
-    function playNext() {
-      if (state.tracks.length === 0) return;
+    function pickNextShuffleTrack(pool, allowCycleReset) {
+      if (pool.length === 0) return null;
+      if (pool.length === 1) {
+        return allowCycleReset ? pool[0] : null;
+      }
+
+      // Garante que o sorteio ocorra APENAS dentro das faixas da playlist/pool atual
+      let unplayed = pool.filter(
+        t => !state.shufflePlayedIds.includes(t.id) && t.id !== state.currentTrackId
+      );
+
+      if (unplayed.length === 0) {
+        if (!allowCycleReset) return null;
+        state.shufflePlayedIds = state.currentTrackId ? [state.currentTrackId] : [];
+        unplayed = pool.filter(t => t.id !== state.currentTrackId);
+      }
+
+      const chosen = unplayed[Math.floor(Math.random() * unplayed.length)];
+      return chosen || pool[0];
+    }
+
+    function playNext(fromAutoEnd = false) {
+      const pool = getActivePlaybackTracks();
+      if (pool.length === 0) return;
+
+      const inPlaylist = isInPlaylistContext();
+
       if (state.isShuffle) {
-        const randomIndex = Math.floor(Math.random() * state.tracks.length);
-        playTrackById(state.tracks[randomIndex].id);
+        // Quando está no fim automático sem repetir playlist, para após tocar todas as faixas da playlist
+        const allowWrap = !fromAutoEnd || !inPlaylist || state.repeatMode === 'playlist';
+        const nextShuffle = pickNextShuffleTrack(pool, allowWrap);
+        if (!nextShuffle) {
+          state.isPlaying = false;
+          state.currentTime = 0;
+          state.shufflePlayedIds = [];
+          audioEngine.pause();
+          updatePlayerBarUI();
+          renderAll();
+          showToast('Fim da playlist reproduzida.');
+          return;
+        }
+        playTrackById(nextShuffle.id, state.playbackContext);
         return;
       }
-      const idx = state.tracks.findIndex(t => t.id === state.currentTrackId);
-      const nextIdx = (idx + 1) % state.tracks.length;
-      playTrackById(state.tracks[nextIdx].id);
+
+      const idx = pool.findIndex(t => t.id === state.currentTrackId);
+      const isLastTrack = idx >= pool.length - 1;
+
+      if (fromAutoEnd && inPlaylist && isLastTrack && state.repeatMode !== 'playlist') {
+        state.isPlaying = false;
+        state.currentTime = 0;
+        audioEngine.pause();
+        updatePlayerBarUI();
+        renderAll();
+        showToast('Fim da playlist reproduzida.');
+        return;
+      }
+
+      const nextIdx = (idx + 1) % pool.length;
+      playTrackById(pool[nextIdx].id, state.playbackContext);
     }
 
     function playPrev() {
-      if (state.tracks.length === 0) return;
+      const pool = getActivePlaybackTracks();
+      if (pool.length === 0) return;
+
       if (state.currentTime > 4) {
         audioEngine.seek(0);
         return;
       }
-      const idx = state.tracks.findIndex(t => t.id === state.currentTrackId);
-      const prevIdx = (idx - 1 + state.tracks.length) % state.tracks.length;
-      playTrackById(state.tracks[prevIdx].id);
+
+      if (state.isShuffle && pool.length > 1) {
+        const others = pool.filter(t => t.id !== state.currentTrackId);
+        const randomPrev = others[Math.floor(Math.random() * others.length)];
+        playTrackById(randomPrev.id, state.playbackContext);
+        return;
+      }
+
+      const idx = pool.findIndex(t => t.id === state.currentTrackId);
+      const prevIdx = (idx - 1 + pool.length) % pool.length;
+      playTrackById(pool[prevIdx].id, state.playbackContext);
     }
 
     function handleTrackEnd() {
-      if (state.isRepeat && state.currentTrackId) {
+      if (state.repeatMode === 'one' && state.currentTrackId) {
         audioEngine.seek(0);
         const track = getTrackById(state.currentTrackId);
         audioEngine.playTrack(track, false);
       } else {
-        playNext();
+        playNext(true);
       }
     }
 
@@ -3018,11 +3166,13 @@
       if (track) {
         document.getElementById('playerCover').src = track.cover;
         document.getElementById('playerTitle').textContent = track.title;
-        document.getElementById('playerArtist').textContent = `${track.artist} • ${track.category}`;
+        const ctxTag = isInPlaylistContext() ? ` • ${getActiveContextLabel()}` : '';
+        document.getElementById('playerArtist').textContent = `${track.artist}${ctxTag}`;
         const isLiked = state.likedIds.includes(track.id);
         likeBtn.textContent = isLiked ? '♥' : '♡';
         likeBtn.classList.toggle('liked', isLiked);
       }
+      updateRepeatButtonUI();
       updateProgressUI();
     }
 
@@ -3082,7 +3232,6 @@
         : state.tracks.filter(t => t.category === state.currentCategory);
       const categoryPool = basePool.length > 0 ? basePool : state.tracks;
 
-      // Exclui faixas que já estão em "Tocados Recentemente" para nunca repetir
       const pool = categoryPool.filter(t => !state.recentIds.includes(t.id));
 
       if (pool.length > 0 && !state.searchQuery) {
@@ -3189,6 +3338,9 @@
     function renderLibrary() {
       const titleEl = document.getElementById('libraryTitle');
       const subEl = document.getElementById('librarySubtitle');
+      const playPlBtn = document.getElementById('playCurrentPlaylistBtn');
+      const renamePlBtn = document.getElementById('renameCurrentPlaylistBtn');
+      const inlineRenameBtn = document.getElementById('inlineRenamePlaylistBtn');
       const delBtn = document.getElementById('deleteCurrentPlaylistBtn');
       const backBtn = document.getElementById('backToLibraryOverviewBtn');
       const container = document.getElementById('libraryContent');
@@ -3211,20 +3363,24 @@
       if (state.selectedLibraryTab === 'overview') {
         titleEl.textContent = 'Sua Biblioteca';
         subEl.textContent = 'Escolha suas músicas favoritas ou uma de suas playlists';
+        playPlBtn.style.display = 'none';
+        renamePlBtn.style.display = 'none';
+        if (inlineRenameBtn) inlineRenameBtn.style.display = 'none';
         delBtn.style.display = 'none';
         if (backBtn) backBtn.style.display = 'none';
 
-        const firstLikedId = likedTracks.length > 0 ? likedTracks[0].id : null;
-        const isLikedPlaying = likedTracks.some(t => t.id === state.currentTrackId && state.isPlaying);
+        const isLikedContextPlaying =
+          state.playbackContext.type === 'liked' &&
+          state.isPlaying;
 
         let cardsHtml = `
-          <div class="library-tile-card" onclick="openLibraryTab('liked')" role="button" tabindex="0">
+          <div class="library-tile-card ${isLikedContextPlaying ? 'playing' : ''}" onclick="openLibraryTab('liked')" role="button" tabindex="0">
             <div class="library-tile-cover favorites">
               <span class="track-badge-cat">Favoritas</span>
               <span class="library-tile-icon" aria-hidden="true">♥</span>
-              ${firstLikedId ? `
-                <button class="card-play-fab" onclick="event.stopPropagation(); toggleTrackById('${firstLikedId}')" title="Tocar Músicas Favoritas" aria-label="Tocar Músicas Favoritas">
-                  ${isLikedPlaying ? '⏸' : '▶'}
+              ${likedTracks.length > 0 ? `
+                <button class="card-play-fab" onclick="event.stopPropagation(); togglePlaylistContext('liked')" title="${isLikedContextPlaying ? 'Pausar' : 'Tocar'} Músicas Favoritas" aria-label="Tocar Músicas Favoritas">
+                  ${isLikedContextPlaying ? '⏸' : '▶'}
                 </button>
               ` : ''}
             </div>
@@ -3237,8 +3393,10 @@
 
         state.playlists.forEach(pl => {
           const plTracks = pl.trackIds.map(id => getTrackById(id)).filter(Boolean);
-          const firstPlTrackId = plTracks.length > 0 ? plTracks[0].id : null;
-          const isPlPlaying = plTracks.some(t => t.id === state.currentTrackId && state.isPlaying);
+          const isPlContextPlaying =
+            state.playbackContext.type === 'playlist' &&
+            state.playbackContext.id === pl.id &&
+            state.isPlaying;
 
           let coverInnerHtml = '';
           let extraCoverClass = '';
@@ -3256,13 +3414,13 @@
           }
 
           cardsHtml += `
-            <div class="library-tile-card" onclick="openLibraryTab('${pl.id}')" role="button" tabindex="0">
+            <div class="library-tile-card ${isPlContextPlaying ? 'playing' : ''}" onclick="openLibraryTab('${pl.id}')" role="button" tabindex="0">
               <div class="library-tile-cover ${extraCoverClass}">
                 <span class="track-badge-cat">Playlist</span>
                 ${coverInnerHtml}
-                ${firstPlTrackId ? `
-                  <button class="card-play-fab" onclick="event.stopPropagation(); toggleTrackById('${firstPlTrackId}')" title="Tocar ${pl.name}" aria-label="Tocar ${pl.name}">
-                    ${isPlPlaying ? '⏸' : '▶'}
+                ${plTracks.length > 0 ? `
+                  <button class="card-play-fab" onclick="event.stopPropagation(); togglePlaylistContext('playlist', '${pl.id}')" title="${isPlContextPlaying ? 'Pausar' : 'Tocar'} ${pl.name}" aria-label="Tocar ${pl.name}">
+                    ${isPlContextPlaying ? '⏸' : '▶'}
                   </button>
                 ` : ''}
               </div>
@@ -3294,11 +3452,15 @@
 
       let trackList = [];
       let isCustomPlaylist = false;
+      let ctxType = 'liked';
+      let ctxId = null;
 
       if (state.selectedLibraryTab === 'liked') {
         trackList = likedTracks;
         titleEl.textContent = '♥ Músicas Favoritas';
         subEl.textContent = `${trackList.length} faixa(s) salva(s) nos seus favoritos`;
+        renamePlBtn.style.display = 'none';
+        if (inlineRenameBtn) inlineRenameBtn.style.display = 'none';
         delBtn.style.display = 'none';
       } else {
         const pl = state.playlists.find(p => p.id === state.selectedLibraryTab);
@@ -3308,10 +3470,25 @@
           return;
         }
         isCustomPlaylist = true;
+        ctxType = 'playlist';
+        ctxId = pl.id;
         trackList = pl.trackIds.map(id => getTrackById(id)).filter(Boolean);
         titleEl.textContent = `♫ ${pl.name}`;
         subEl.textContent = `Playlist personalizada • ${trackList.length} faixa(s)`;
+        renamePlBtn.style.display = 'inline-flex';
+        if (inlineRenameBtn) inlineRenameBtn.style.display = 'inline-grid';
         delBtn.style.display = 'inline-flex';
+      }
+
+      if (trackList.length > 0) {
+        const isThisPlaylistPlaying =
+          state.playbackContext.type === ctxType &&
+          state.playbackContext.id === ctxId &&
+          state.isPlaying;
+        playPlBtn.style.display = 'inline-flex';
+        playPlBtn.textContent = isThisPlaylistPlaying ? '⏸ Pausar Playlist' : '▶ Tocar Playlist';
+      } else {
+        playPlBtn.style.display = 'none';
       }
 
       if (trackList.length === 0) {
@@ -3326,6 +3503,8 @@
         return;
       }
 
+      const ctxArgId = ctxId ? `'${ctxId}'` : 'null';
+
       container.innerHTML = `
         <table class="track-table">
           <thead>
@@ -3339,17 +3518,21 @@
           </thead>
           <tbody>
             ${trackList.map((t) => {
-              const isTrackPlaying = state.currentTrackId === t.id && state.isPlaying;
+              const isCurrentInPlaylist =
+                state.currentTrackId === t.id &&
+                state.playbackContext.type === ctxType &&
+                state.playbackContext.id === ctxId;
+              const isTrackPlaying = isCurrentInPlaylist && state.isPlaying;
               return `
-              <tr>
+              <tr class="${isCurrentInPlaylist ? 'playing-row' : ''}">
                 <td>
-                  <button class="btn-icon-sm" onclick="toggleTrackById('${t.id}')" title="${isTrackPlaying ? 'Pausar' : 'Tocar'} faixa">${isTrackPlaying ? '⏸' : '▶'}</button>
+                  <button class="btn-icon-sm" onclick="toggleTrackById('${t.id}', { type: '${ctxType}', id: ${ctxArgId} })" title="${isTrackPlaying ? 'Pausar' : 'Tocar'} na playlist">${isTrackPlaying ? '⏸' : '▶'}</button>
                 </td>
                 <td>
                   <div class="table-track-info">
                     <img src="${t.cover}" alt="${t.title}" onerror="this.src='https://placehold.co/120x120/2e003e/ffffff?text=CEUB'" />
                     <div>
-                      <div style="font-weight: 700;">${t.title}</div>
+                      <div style="font-weight: 700; ${isCurrentInPlaylist ? 'color: var(--ceub-magenta-500);' : ''}">${t.title}</div>
                       <div style="font-size: 0.78rem; color: var(--text-secondary);">${t.artist}</div>
                     </div>
                   </div>
@@ -3423,10 +3606,20 @@
 
     function renderQueue() {
       const queueList = document.getElementById('queueList');
-      queueList.innerHTML = state.tracks.map(t => {
+      const queueSub = document.getElementById('queueContextSubtitle');
+      const activePool = getActivePlaybackTracks();
+      const ctxArgId = state.playbackContext.id ? `'${state.playbackContext.id}'` : 'null';
+
+      if (queueSub) {
+        queueSub.textContent = isInPlaylistContext()
+          ? `${getActiveContextLabel()} (${activePool.length} ${activePool.length === 1 ? 'faixa' : 'faixas'})`
+          : 'Catálogo Geral • Clique em uma música para tocar agora';
+      }
+
+      queueList.innerHTML = activePool.map(t => {
         const isCurrent = state.currentTrackId === t.id;
         return `
-          <div class="queue-item ${isCurrent ? 'current' : ''}" onclick="toggleTrackById('${t.id}')">
+          <div class="queue-item ${isCurrent ? 'current' : ''}" onclick="toggleTrackById('${t.id}', { type: '${state.playbackContext.type}', id: ${ctxArgId} })">
             <img src="${t.cover}" alt="${t.title}" onerror="this.src='https://placehold.co/120x120/2e003e/ffffff?text=CEUB'" />
             <div style="min-width:0; flex:1;">
               <div style="font-size:0.84rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${t.title}</div>
@@ -3568,6 +3761,20 @@
       });
     };
 
+    function openRenameCurrentPlaylistModal() {
+      const pl = state.playlists.find(p => p.id === state.selectedLibraryTab);
+      if (!pl) return;
+      const input = document.getElementById('renamePlaylistInput');
+      const saveBtn = document.getElementById('confirmRenamePlaylistBtn');
+      input.value = pl.name;
+      saveBtn.disabled = false;
+      document.getElementById('renamePlaylistModal').classList.add('open');
+      setTimeout(() => {
+        input.focus();
+        input.select();
+      }, 30);
+    }
+
     function syncManagerSourceVisibility(mode) {
       document.getElementById('folderAudioGroup').style.display = mode === 'folder' ? 'flex' : 'none';
       document.getElementById('cloudUrlGroup').style.display = mode === 'external' ? 'flex' : 'none';
@@ -3672,6 +3879,7 @@
 
       applyThemeUI();
       syncManagerSourceVisibility('folder');
+      updateRepeatButtonUI();
       renderAll();
       fetchTracksFromCloud(false);
 
@@ -3745,7 +3953,7 @@
       }
 
       document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
-      document.getElementById('nextBtn').addEventListener('click', playNext);
+      document.getElementById('nextBtn').addEventListener('click', () => playNext(false));
       document.getElementById('prevBtn').addEventListener('click', playPrev);
       document.getElementById('playerLikeBtn').addEventListener('click', () => {
         if (state.currentTrackId) toggleLikeTrack(state.currentTrackId);
@@ -3753,14 +3961,57 @@
 
       document.getElementById('shuffleBtn').addEventListener('click', (e) => {
         state.isShuffle = !state.isShuffle;
+        state.shufflePlayedIds = state.currentTrackId ? [state.currentTrackId] : [];
         e.currentTarget.classList.toggle('active', state.isShuffle);
-        showToast(state.isShuffle ? 'Ordem aleatória ativada' : 'Ordem aleatória desativada');
+        if (state.isShuffle) {
+          showToast(
+            isInPlaylistContext()
+              ? `Ordem aleatória ativada (${getActiveContextLabel()})`
+              : 'Ordem aleatória ativada'
+          );
+        } else {
+          showToast('Ordem aleatória desativada');
+        }
       });
 
-      document.getElementById('repeatBtn').addEventListener('click', (e) => {
-        state.isRepeat = !state.isRepeat;
-        e.currentTarget.classList.toggle('active', state.isRepeat);
-        showToast(state.isRepeat ? 'Repetição de faixa ativada' : 'Repetição desativada');
+      document.getElementById('repeatBtn').addEventListener('click', () => {
+        // Se o usuário está visualizando uma playlist na Biblioteca, mas ainda não deu play nela,
+        // vincula o contexto daquela playlist caso ela possua músicas para o 2º clique funcionar intuitivamente.
+        if (
+          !isInPlaylistContext() &&
+          state.activeView === 'library' &&
+          state.selectedLibraryTab !== 'overview'
+        ) {
+          if (state.selectedLibraryTab === 'liked' && state.likedIds.length > 0) {
+            state.playbackContext = { type: 'liked', id: null };
+          } else {
+            const viewingPl = state.playlists.find(p => p.id === state.selectedLibraryTab);
+            if (viewingPl && viewingPl.trackIds.length > 0) {
+              state.playbackContext = { type: 'playlist', id: viewingPl.id };
+            }
+          }
+        }
+
+        const inPlaylist = isInPlaylistContext();
+
+        if (state.repeatMode === 'off') {
+          state.repeatMode = 'one';
+          showToast('Repetição da música atual ativada');
+        } else if (state.repeatMode === 'one') {
+          if (inPlaylist) {
+            state.repeatMode = 'playlist';
+            showToast(`Repetição da playlist ativada (${getActiveContextLabel()})`);
+          } else {
+            state.repeatMode = 'off';
+            showToast('Repetição desativada');
+          }
+        } else {
+          state.repeatMode = 'off';
+          showToast('Repetição desativada');
+        }
+
+        updateRepeatButtonUI();
+        renderQueue();
       });
 
       // Barra de Progresso Clicável
@@ -3852,12 +4103,51 @@
         openLibraryTab(newPl.id);
       });
 
+      // Tocar Playlist / Editar Nome da Playlist
+      document.getElementById('playCurrentPlaylistBtn').addEventListener('click', () => {
+        if (state.selectedLibraryTab === 'liked') {
+          window.togglePlaylistContext('liked', null);
+        } else if (state.selectedLibraryTab !== 'overview') {
+          window.togglePlaylistContext('playlist', state.selectedLibraryTab);
+        }
+      });
+
+      document.getElementById('renameCurrentPlaylistBtn').addEventListener('click', openRenameCurrentPlaylistModal);
+      document.getElementById('inlineRenamePlaylistBtn').addEventListener('click', openRenameCurrentPlaylistModal);
+
+      const renameInput = document.getElementById('renamePlaylistInput');
+      const confirmRenameBtn = document.getElementById('confirmRenamePlaylistBtn');
+      renameInput.addEventListener('input', () => {
+        confirmRenameBtn.disabled = renameInput.value.trim().length === 0;
+      });
+
+      document.getElementById('renamePlaylistForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newName = renameInput.value.trim();
+        if (!newName) return;
+        const pl = state.playlists.find(p => p.id === state.selectedLibraryTab);
+        if (!pl) return;
+        pl.name = newName;
+        saveState();
+        document.getElementById('renamePlaylistModal').classList.remove('open');
+        updatePlayerBarUI();
+        renderAll();
+        showToast(`Nome da playlist atualizado para "${newName}"!`);
+      });
+
       // Excluir Playlist
       document.getElementById('deleteCurrentPlaylistBtn').addEventListener('click', () => {
         const idx = state.playlists.findIndex(p => p.id === state.selectedLibraryTab);
         if (idx === -1) return;
         const removedPl = state.playlists[idx];
         state.playlists.splice(idx, 1);
+        if (state.playbackContext.type === 'playlist' && state.playbackContext.id === removedPl.id) {
+          state.playbackContext = { type: 'all', id: null };
+          if (state.repeatMode === 'playlist') {
+            state.repeatMode = 'off';
+            updateRepeatButtonUI();
+          }
+        }
         state.selectedLibraryTab = 'overview';
         saveState();
         renderAll();
