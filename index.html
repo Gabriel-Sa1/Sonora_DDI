@@ -1920,10 +1920,10 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="trackCoverInput">Capa (URL ou arquivo em <code>musicas/</code>) — Opcional</label>
-                  <input type="text" id="trackCoverInput" class="form-control" placeholder="Ex: https://...jpg ou musicas/capa.jpg" />
+                  <label for="trackCoverInput">Capa (URL ou arquivo em <code>capas/</code>) — Opcional</label>
+                  <input type="text" id="trackCoverInput" class="form-control" placeholder="Ex: https://...jpg ou capas/capa.jpg" />
                   <div class="drive-status-badge" id="coverDetectedBadge">✓ Caminho da imagem configurado!</div>
-                  <span class="form-hint">Aceita link direto de imagem (<code>.jpg</code>/<code>.png</code>) ou caminho relativo como <code>musicas/capa.jpg</code>.</span>
+                  <span class="form-hint">Aceita link direto de imagem (<code>.jpg</code>/<code>.png</code>) ou caminho relativo como <code>capas/capa.jpg</code>.</span>
                 </div>
 
                 <button type="submit" class="btn-submit" id="publishTrackBtn">+ Publicar para Todos no Sonora</button>
@@ -2103,7 +2103,7 @@
         <li><strong>Barra de Espaço:</strong> Reproduz ou pausa a música atual (fora de campos de texto).</li>
         <li><strong>Tecla ESC:</strong> Fecha qualquer janela modal ou a gaveta lateral de fila.</li>
         <li><strong>Pasta <code>musicas/</code> no GitHub:</strong> Crie uma pasta chamada <code>musicas</code> no repositório, envie seus <code>.mp3</code> para lá e, no Painel do Gerente, digite apenas o nome do arquivo (ex: <code>on-and-on.mp3</code>).</li>
-        <li><strong>Capas:</strong> Use um link direto terminado em <code>.jpg</code>/<code>.png</code> ou salve a capa na pasta e digite <code>musicas/capa.jpg</code>.</li>
+        <li><strong>Capas:</strong> Use um link direto terminado em <code>.jpg</code>/<code>.png</code> ou salve a capa na pasta e digite <code>capas/capa.jpg</code>.</li>
       </ul>
     </div>
   </div>
@@ -2222,7 +2222,7 @@
         return trimmed.replace(/[?&]dl=0/, '?raw=1').replace(/[?&]dl=1/, '?raw=1');
       }
 
-      // Suporte a caminho relativo local no repositório (ex: "musicas/capa.jpg" ou "capas/capa.jpg")
+      // Suporte a caminho relativo local no repositório (ex: "capas/capa.jpg" ou "musicas/capa.jpg")
       if (!/^https?:\/\//i.test(trimmed) && !trimmed.startsWith('data:') && !trimmed.startsWith('blob:')) {
         const cleanRel = trimmed.replace(/^\.?\//, '');
         return `./${cleanRel}`;
@@ -2517,6 +2517,7 @@
         this.candidateIndex = 0;
         this.currentObjectUrl = null;
         this.attemptToken = 0;
+        this.loadedTrackId = null;
 
         this.htmlAudio.addEventListener('ended', () => handleTrackEnd());
         this.htmlAudio.addEventListener('loadedmetadata', () => {
@@ -2553,6 +2554,7 @@
           return;
         }
 
+        this.loadedTrackId = null;
         const track = getTrackById(state.currentTrackId);
         const isFolder = track && isFolderAudioUrl(track.url);
         const isDrive = track && extractGoogleDriveId(track.url);
@@ -2604,6 +2606,16 @@
         const currentToken = this.attemptToken;
         if (resetTime) state.currentTime = 0;
 
+        // Retomada instantânea sem recarregar o arquivo (evita engasgo/tilt ao pausar e despausar)
+        if (!resetTime && this.mode === 'html' && this.loadedTrackId === track.id && this.htmlAudio.currentSrc) {
+          this.setVolume(state.volume);
+          this.htmlAudio.play().catch(() => {
+            this.loadedTrackId = null;
+            this.playTrack(track, false);
+          });
+          return;
+        }
+
         if (track.localAudioId) {
           try {
             const blob = await LocalAudioStore.getBlob(track.localAudioId);
@@ -2611,6 +2623,7 @@
               if (this.currentObjectUrl) URL.revokeObjectURL(this.currentObjectUrl);
               this.currentObjectUrl = URL.createObjectURL(blob);
               this.mode = 'html';
+              this.loadedTrackId = track.id;
               this.urlCandidates = [this.currentObjectUrl];
               this.candidateIndex = 0;
               this.htmlAudio.src = this.currentObjectUrl;
@@ -2620,12 +2633,14 @@
               return;
             }
           } catch (_) {
+            this.loadedTrackId = null;
             showToast('Arquivo local disponível apenas no dispositivo de origem.');
           }
         }
 
         if (track.url && track.url.trim() !== '') {
           this.mode = 'html';
+          this.loadedTrackId = track.id;
           this.urlCandidates = getPlayableCandidates(track.url);
           this.candidateIndex = 0;
           this.htmlAudio.src = this.urlCandidates[0];
@@ -2635,12 +2650,14 @@
             this.tryNextCandidateOrFallback(currentToken);
           });
         } else {
+          this.loadedTrackId = null;
           this.startSynth(track.preset || 'lofi');
         }
       }
 
       startSynth(preset) {
         this.mode = 'synth';
+        this.loadedTrackId = null;
         this.ensureContext();
         this.setVolume(state.volume);
 
@@ -2765,6 +2782,8 @@
       if (!track) return;
 
       const isSame = state.currentTrackId === id;
+      if (isSame && state.isPlaying) return;
+
       state.currentTrackId = id;
       state.isPlaying = true;
 
@@ -2774,6 +2793,14 @@
       audioEngine.playTrack(track, !isSame);
       updatePlayerBarUI();
       renderAll();
+    }
+
+    function toggleTrackById(id) {
+      if (state.currentTrackId === id) {
+        togglePlayPause();
+      } else {
+        playTrackById(id);
+      }
     }
 
     function togglePlayPause() {
@@ -2820,7 +2847,7 @@
       if (state.isRepeat && state.currentTrackId) {
         audioEngine.seek(0);
         const track = getTrackById(state.currentTrackId);
-        audioEngine.playTrack(track, true);
+        audioEngine.playTrack(track, false);
       } else {
         playNext();
       }
@@ -2924,7 +2951,7 @@
       if (recentTracks.length > 0 && !state.searchQuery) {
         recentSection.style.display = 'block';
         recentGrid.innerHTML = recentTracks.map(t => `
-          <div class="recent-card" onclick="playTrackById('${t.id}')">
+          <div class="recent-card" onclick="toggleTrackById('${t.id}')">
             <img src="${t.cover}" alt="${t.title}" onerror="this.src='https://placehold.co/120x120/2e003e/ffffff?text=CEUB'" />
             <span class="recent-card-title">${t.title}</span>
           </div>
@@ -2959,14 +2986,16 @@
       grid.style.display = 'grid';
       grid.innerHTML = filtered.map(track => {
         const isCurrent = state.currentTrackId === track.id;
+        const isTrackPlaying = isCurrent && state.isPlaying;
         const isLiked = state.likedIds.includes(track.id);
+        const actionWord = isTrackPlaying ? 'Pausar' : 'Tocar';
         return `
-          <article class="track-card ${isCurrent && state.isPlaying ? 'playing' : ''}">
+          <article class="track-card ${isCurrent ? 'playing' : ''}">
             <div class="cover-wrapper">
               <span class="track-badge-cat">${track.category}</span>
               <img src="${track.cover}" alt="Capa de ${track.title}" onerror="this.src='https://placehold.co/400x400/2e003e/ffffff?text=Sonora'" />
-              <button class="card-play-fab" onclick="playTrackById('${track.id}')" title="Tocar ${track.title}" aria-label="Tocar ${track.title}">
-                ${isCurrent && state.isPlaying ? '⏸' : '▶'}
+              <button class="card-play-fab" onclick="toggleTrackById('${track.id}')" title="${actionWord} ${track.title}" aria-label="${actionWord} ${track.title}">
+                ${isTrackPlaying ? '⏸' : '▶'}
               </button>
             </div>
             <div class="track-meta">
@@ -3041,10 +3070,12 @@
             </tr>
           </thead>
           <tbody>
-            ${trackList.map((t) => `
+            ${trackList.map((t) => {
+              const isTrackPlaying = state.currentTrackId === t.id && state.isPlaying;
+              return `
               <tr>
                 <td>
-                  <button class="btn-icon-sm" onclick="playTrackById('${t.id}')" title="Tocar faixa">▶</button>
+                  <button class="btn-icon-sm" onclick="toggleTrackById('${t.id}')" title="${isTrackPlaying ? 'Pausar' : 'Tocar'} faixa">${isTrackPlaying ? '⏸' : '▶'}</button>
                 </td>
                 <td>
                   <div class="table-track-info">
@@ -3064,7 +3095,8 @@
                   }
                 </td>
               </tr>
-            `).join('')}
+            `;
+            }).join('')}
           </tbody>
         </table>
       `;
@@ -3096,7 +3128,9 @@
       document.getElementById('managerTrackCount').textContent = state.tracks.length;
       const tbody = document.getElementById('managerTracksTbody');
 
-      tbody.innerHTML = state.tracks.map(t => `
+      tbody.innerHTML = state.tracks.map(t => {
+        const isTrackPlaying = state.currentTrackId === t.id && state.isPlaying;
+        return `
         <tr>
           <td>
             <div class="table-track-info">
@@ -3110,12 +3144,13 @@
           <td>${t.category}</td>
           <td><span style="font-size: 0.76rem; color: var(--text-muted);">${getSourceBadgeText(t)}</span></td>
           <td style="text-align: right; white-space: nowrap;">
-            <button class="icon-action" onclick="playTrackById('${t.id}')" title="Testar áudio" style="display:inline-grid;">▶</button>
+            <button class="icon-action" onclick="toggleTrackById('${t.id}')" title="${isTrackPlaying ? 'Pausar' : 'Testar áudio'}" style="display:inline-grid;">${isTrackPlaying ? '⏸' : '▶'}</button>
             <button class="icon-action" onclick="startEditTrack('${t.id}')" title="Editar faixa" style="display:inline-grid;">✎</button>
             <button class="icon-action" onclick="deleteTrackFromCatalog('${t.id}')" title="Remover do catálogo global" style="display:inline-grid; color:#ef4444;">🗑</button>
           </td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
     }
 
     function renderQueue() {
@@ -3123,13 +3158,13 @@
       queueList.innerHTML = state.tracks.map(t => {
         const isCurrent = state.currentTrackId === t.id;
         return `
-          <div class="queue-item ${isCurrent ? 'current' : ''}" onclick="playTrackById('${t.id}')">
+          <div class="queue-item ${isCurrent ? 'current' : ''}" onclick="toggleTrackById('${t.id}')">
             <img src="${t.cover}" alt="${t.title}" onerror="this.src='https://placehold.co/120x120/2e003e/ffffff?text=CEUB'" />
             <div style="min-width:0; flex:1;">
               <div style="font-size:0.84rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${t.title}</div>
               <div style="font-size:0.74rem; color:var(--text-secondary);">${t.artist}</div>
             </div>
-            <span style="font-size:0.74rem; color:var(--text-muted);">${isCurrent ? 'Tocando' : formatTime(t.duration)}</span>
+            <span style="font-size:0.74rem; color:var(--text-muted);">${isCurrent ? (state.isPlaying ? 'Tocando' : 'Pausado') : formatTime(t.duration)}</span>
           </div>
         `;
       }).join('');
