@@ -150,6 +150,7 @@
       grid-template-columns: var(--sidebar-width) 1fr;
       grid-template-rows: 1fr var(--player-height);
       height: 100vh;
+      height: 100dvh;
       width: 100vw;
       overflow: hidden;
     }
@@ -905,6 +906,115 @@
       justify-content: space-between;
       padding-top: 6px;
       border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Grade Visual de Quadradinhos da Biblioteca */
+    .library-tiles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+      gap: 18px;
+    }
+
+    .library-tile-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition);
+      cursor: pointer;
+      text-align: left;
+      position: relative;
+    }
+
+    .library-tile-card:hover {
+      background-color: var(--bg-surface-hover);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-strong);
+    }
+
+    .library-tile-card:hover .card-play-fab {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .library-tile-cover {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--ceub-purple-700), var(--ceub-purple-600));
+    }
+
+    .library-tile-cover.favorites {
+      background: linear-gradient(135deg, #d80073 0%, #7b1fa2 55%, #2e003e 100%);
+    }
+
+    .library-tile-cover.playlist-empty {
+      background: linear-gradient(135deg, #3c0952 0%, #8e0054 100%);
+    }
+
+    .library-tile-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s ease;
+    }
+
+    .library-tile-card:hover .library-tile-cover img {
+      transform: scale(1.05);
+    }
+
+    .library-tile-mosaic {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 2px;
+      background-color: var(--ceub-purple-900);
+    }
+
+    .library-tile-mosaic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .library-tile-icon {
+      font-size: 3.1rem;
+      color: #ffffff;
+      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.35));
+      user-select: none;
+    }
+
+    .library-tile-new {
+      border-style: dashed;
+      border-width: 1.5px;
+      background-color: transparent;
+    }
+
+    .library-tile-new:hover {
+      background-color: var(--bg-surface-hover);
+      border-color: var(--ceub-magenta-500);
+    }
+
+    .library-tile-new .library-tile-cover {
+      background: rgba(216, 0, 115, 0.1);
+      border: 1px dashed rgba(216, 0, 115, 0.35);
+    }
+
+    .library-tile-new .library-tile-icon {
+      font-size: 2.6rem;
+      color: var(--ceub-magenta-500);
+      filter: none;
     }
 
     .icon-action {
@@ -1799,9 +1909,14 @@
         <!-- VIEW 2: SUA BIBLIOTECA -->
         <section class="view-panel" id="view-library">
           <div class="section-header">
-            <div>
-              <h2 class="section-title" id="libraryTitle">Sua Biblioteca &amp; Favoritos</h2>
-              <p class="section-subtitle" id="librarySubtitle">Gerencie suas músicas curtidas e playlists personalizadas</p>
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <button class="action-pill" id="backToLibraryOverviewBtn" onclick="openLibraryTab('overview')" style="display: none;" title="Voltar para os quadradinhos da Biblioteca">
+                ← Biblioteca
+              </button>
+              <div>
+                <h2 class="section-title" id="libraryTitle">Sua Biblioteca</h2>
+                <p class="section-subtitle" id="librarySubtitle">Suas músicas favoritas e playlists personalizadas</p>
+              </div>
             </div>
             <div style="display: flex; gap: 10px;">
               <button class="action-pill" id="deleteCurrentPlaylistBtn" style="display: none; border-color: #ef4444; color: #ef4444;">
@@ -2356,7 +2471,7 @@
       currentCategory: 'Todos',
       searchQuery: '',
       activeView: 'home',
-      selectedLibraryTab: 'liked',
+      selectedLibraryTab: 'overview',
       currentTrackId: null,
       isPlaying: false,
       isShuffle: false,
@@ -3075,14 +3190,16 @@
       const titleEl = document.getElementById('libraryTitle');
       const subEl = document.getElementById('librarySubtitle');
       const delBtn = document.getElementById('deleteCurrentPlaylistBtn');
+      const backBtn = document.getElementById('backToLibraryOverviewBtn');
       const container = document.getElementById('libraryContent');
       const tabsEl = document.getElementById('libraryMenuTabs');
 
+      const likedTracks = state.likedIds.map(id => getTrackById(id)).filter(Boolean);
+
       if (tabsEl) {
-        const likedCount = state.likedIds.map(id => getTrackById(id)).filter(Boolean).length;
         let tabsHtml = `
-          <button class="chip-btn ${state.selectedLibraryTab === 'liked' ? 'active' : ''}" onclick="openLibraryTab('liked')">♥ Curtidas (${likedCount})</button>
-          <button class="chip-btn ${state.selectedLibraryTab === 'recommended' ? 'active' : ''}" onclick="openLibraryTab('recommended')">✨ Recomendadas</button>
+          <button class="chip-btn ${state.selectedLibraryTab === 'overview' ? 'active' : ''}" onclick="openLibraryTab('overview')">⊞ Tudo</button>
+          <button class="chip-btn ${state.selectedLibraryTab === 'liked' ? 'active' : ''}" onclick="openLibraryTab('liked')">♥ Favoritas (${likedTracks.length})</button>
         `;
         state.playlists.forEach(p => {
           tabsHtml += `<button class="chip-btn ${state.selectedLibraryTab === p.id ? 'active' : ''}" onclick="openLibraryTab('${p.id}')">♫ ${p.name}</button>`;
@@ -3090,26 +3207,103 @@
         tabsEl.innerHTML = tabsHtml;
       }
 
+      // MODO VISÃO GERAL: Quadradinhos visuais de Músicas Favoritas e Minhas Playlists
+      if (state.selectedLibraryTab === 'overview') {
+        titleEl.textContent = 'Sua Biblioteca';
+        subEl.textContent = 'Escolha suas músicas favoritas ou uma de suas playlists';
+        delBtn.style.display = 'none';
+        if (backBtn) backBtn.style.display = 'none';
+
+        const firstLikedId = likedTracks.length > 0 ? likedTracks[0].id : null;
+        const isLikedPlaying = likedTracks.some(t => t.id === state.currentTrackId && state.isPlaying);
+
+        let cardsHtml = `
+          <div class="library-tile-card" onclick="openLibraryTab('liked')" role="button" tabindex="0">
+            <div class="library-tile-cover favorites">
+              <span class="track-badge-cat">Favoritas</span>
+              <span class="library-tile-icon" aria-hidden="true">♥</span>
+              ${firstLikedId ? `
+                <button class="card-play-fab" onclick="event.stopPropagation(); toggleTrackById('${firstLikedId}')" title="Tocar Músicas Favoritas" aria-label="Tocar Músicas Favoritas">
+                  ${isLikedPlaying ? '⏸' : '▶'}
+                </button>
+              ` : ''}
+            </div>
+            <div class="track-meta">
+              <h3 class="track-title">Músicas Favoritas</h3>
+              <p class="track-artist">${likedTracks.length} ${likedTracks.length === 1 ? 'música curtida' : 'músicas curtidas'}</p>
+            </div>
+          </div>
+        `;
+
+        state.playlists.forEach(pl => {
+          const plTracks = pl.trackIds.map(id => getTrackById(id)).filter(Boolean);
+          const firstPlTrackId = plTracks.length > 0 ? plTracks[0].id : null;
+          const isPlPlaying = plTracks.some(t => t.id === state.currentTrackId && state.isPlaying);
+
+          let coverInnerHtml = '';
+          let extraCoverClass = '';
+          if (plTracks.length >= 4) {
+            coverInnerHtml = `
+              <div class="library-tile-mosaic">
+                ${plTracks.slice(0, 4).map(t => `<img src="${t.cover}" alt="${t.title}" onerror="this.src='https://placehold.co/200x200/2e003e/ffffff?text=CEUB'" />`).join('')}
+              </div>
+            `;
+          } else if (plTracks.length > 0) {
+            coverInnerHtml = `<img src="${plTracks[0].cover}" alt="${pl.name}" onerror="this.src='https://placehold.co/400x400/2e003e/ffffff?text=CEUB'" />`;
+          } else {
+            extraCoverClass = 'playlist-empty';
+            coverInnerHtml = `<span class="library-tile-icon" aria-hidden="true">♫</span>`;
+          }
+
+          cardsHtml += `
+            <div class="library-tile-card" onclick="openLibraryTab('${pl.id}')" role="button" tabindex="0">
+              <div class="library-tile-cover ${extraCoverClass}">
+                <span class="track-badge-cat">Playlist</span>
+                ${coverInnerHtml}
+                ${firstPlTrackId ? `
+                  <button class="card-play-fab" onclick="event.stopPropagation(); toggleTrackById('${firstPlTrackId}')" title="Tocar ${pl.name}" aria-label="Tocar ${pl.name}">
+                    ${isPlPlaying ? '⏸' : '▶'}
+                  </button>
+                ` : ''}
+              </div>
+              <div class="track-meta">
+                <h3 class="track-title" title="${pl.name}">${pl.name}</h3>
+                <p class="track-artist">${plTracks.length} ${plTracks.length === 1 ? 'faixa' : 'faixas'}</p>
+              </div>
+            </div>
+          `;
+        });
+
+        cardsHtml += `
+          <div class="library-tile-card library-tile-new" onclick="document.getElementById('openCreatePlaylistBtn').click()" role="button" tabindex="0">
+            <div class="library-tile-cover">
+              <span class="library-tile-icon" aria-hidden="true">+</span>
+            </div>
+            <div class="track-meta">
+              <h3 class="track-title">Nova Playlist</h3>
+              <p class="track-artist">Criar nova coleção</p>
+            </div>
+          </div>
+        `;
+
+        container.innerHTML = `<div class="library-tiles-grid">${cardsHtml}</div>`;
+        return;
+      }
+
+      if (backBtn) backBtn.style.display = 'inline-flex';
+
       let trackList = [];
       let isCustomPlaylist = false;
-      let isRecommendedTab = false;
 
       if (state.selectedLibraryTab === 'liked') {
-        trackList = state.likedIds.map(id => getTrackById(id)).filter(Boolean);
-        titleEl.textContent = '♥ Músicas Curtidas';
+        trackList = likedTracks;
+        titleEl.textContent = '♥ Músicas Favoritas';
         subEl.textContent = `${trackList.length} faixa(s) salva(s) nos seus favoritos`;
-        delBtn.style.display = 'none';
-      } else if (state.selectedLibraryTab === 'recommended') {
-        isRecommendedTab = true;
-        const unliked = state.tracks.filter(t => !state.likedIds.includes(t.id));
-        trackList = (unliked.length > 0 ? unliked : state.tracks).slice(0, 6);
-        titleEl.textContent = '✨ Músicas Recomendadas';
-        subEl.textContent = 'Sugestões selecionadas do catálogo sem copyright para você';
         delBtn.style.display = 'none';
       } else {
         const pl = state.playlists.find(p => p.id === state.selectedLibraryTab);
         if (!pl) {
-          state.selectedLibraryTab = 'liked';
+          state.selectedLibraryTab = 'overview';
           renderLibrary();
           return;
         }
@@ -3165,10 +3359,7 @@
                 <td style="text-align: right;">
                   ${isCustomPlaylist
                     ? `<button class="icon-action" onclick="removeTrackFromPlaylist('${state.selectedLibraryTab}', '${t.id}')" title="Remover da playlist" style="display:inline-grid;">✕</button>`
-                    : isRecommendedTab
-                      ? `<button class="icon-action ${state.likedIds.includes(t.id) ? 'liked' : ''}" onclick="toggleLikeTrack('${t.id}')" title="Favoritar" style="display:inline-grid;">${state.likedIds.includes(t.id) ? '♥' : '♡'}</button>
-                         <button class="icon-action" onclick="openAddToPlaylistModal('${t.id}')" title="Adicionar à playlist" style="display:inline-grid;">+</button>`
-                      : `<button class="icon-action liked" onclick="toggleLikeTrack('${t.id}')" title="Remover dos favoritos" style="display:inline-grid;">♥</button>`
+                    : `<button class="icon-action liked" onclick="toggleLikeTrack('${t.id}')" title="Remover dos favoritos" style="display:inline-grid;">♥</button>`
                   }
                 </td>
               </tr>
@@ -3302,6 +3493,10 @@
         return;
       }
 
+      if (viewName === 'library' && arguments[1] !== true) {
+        state.selectedLibraryTab = 'overview';
+      }
+
       state.activeView = viewName;
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.view === viewName);
@@ -3315,7 +3510,7 @@
 
     window.openLibraryTab = function(tabId) {
       state.selectedLibraryTab = tabId;
-      switchView('library');
+      switchView('library', true);
     };
 
     window.resetFilters = function() {
@@ -3663,7 +3858,7 @@
         if (idx === -1) return;
         const removedPl = state.playlists[idx];
         state.playlists.splice(idx, 1);
-        state.selectedLibraryTab = 'liked';
+        state.selectedLibraryTab = 'overview';
         saveState();
         renderAll();
 
