@@ -764,6 +764,22 @@
       flex: 1;
     }
 
+    .rec-card-meta {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      flex: 1;
+      gap: 2px;
+    }
+
+    .rec-card-sub {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     /* Grade Principal de Músicas */
     .tracks-grid {
       display: grid;
@@ -1748,20 +1764,15 @@
             <button class="chip-btn" data-category="Relaxar">Relaxar</button>
           </div>
 
-          <div class="hero-banner">
-            <div class="hero-info">
-              <span class="hero-tag">✦ Experiência Sonora CEUB • Áudio 100% Livre</span>
-              <h1 class="hero-title" id="heroGreeting">Trilhas para estudar, criar e focar no CEUB</h1>
-              <p class="hero-desc">Ouça faixas instrumentais sem copyright, podcasts acadêmicos e playlists curadas com player de áudio real e Modo Foco Pomodoro integrado.</p>
-              <div class="hero-actions">
-                <button class="btn-hero-play" id="heroPlayAllBtn">
-                  ▶ Tocar Seleção CEUB
-                </button>
-                <button class="btn-hero-secondary" data-jump-view="focus">
-                  ⏱ Abrir Modo Foco
-                </button>
+          <div id="recommendedSection" style="display: none;">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">Músicas Recomendadas</h2>
+                <p class="section-subtitle">Sugestões rápidas para o seu momento de estudo</p>
               </div>
+              <button class="action-pill" id="refreshRecsBtn" title="Ver outras 3 sugestões" style="padding: 6px 12px; font-size: 0.78rem;">↻ Outras</button>
             </div>
+            <div class="recent-grid" id="recommendedTracksGrid"></div>
           </div>
 
           <div id="recentSection" style="display: none;">
@@ -1801,6 +1812,8 @@
               </button>
             </div>
           </div>
+
+          <div class="chips-bar" id="libraryMenuTabs" role="tablist" aria-label="Menu da Biblioteca" style="margin-bottom: 16px;"></div>
 
           <div id="libraryContent"></div>
         </section>
@@ -2353,7 +2366,8 @@
       currentTime: 0,
       trackToAddId: null,
       editingTrackId: null,
-      cloudStatus: 'syncing'
+      cloudStatus: 'syncing',
+      recOffset: 0
     };
 
     function sanitizeTrackObject(t) {
@@ -2945,11 +2959,42 @@
     }
 
     function renderHome() {
-      const greetingEl = document.getElementById('heroGreeting');
-      if (state.user) {
-        greetingEl.textContent = `Olá, ${state.user.name.split(' ')[0]}! Pronto para focar no CEUB?`;
+      const recSection = document.getElementById('recommendedSection');
+      const recGrid = document.getElementById('recommendedTracksGrid');
+      const refreshRecsBtn = document.getElementById('refreshRecsBtn');
+      const basePool = state.currentCategory === 'Todos'
+        ? state.tracks
+        : state.tracks.filter(t => t.category === state.currentCategory);
+      const categoryPool = basePool.length > 0 ? basePool : state.tracks;
+
+      // Exclui faixas que já estão em "Tocados Recentemente" para nunca repetir
+      const pool = categoryPool.filter(t => !state.recentIds.includes(t.id));
+
+      if (pool.length > 0 && !state.searchQuery) {
+        recSection.style.display = 'block';
+        if (refreshRecsBtn) {
+          refreshRecsBtn.style.display = pool.length > 3 ? 'inline-flex' : 'none';
+        }
+        const count = Math.min(3, pool.length);
+        const start = state.recOffset % pool.length;
+        const recs = [];
+        for (let i = 0; i < count; i++) {
+          recs.push(pool[(start + i) % pool.length]);
+        }
+        recGrid.innerHTML = recs.map(t => {
+          const isPlayingThis = state.currentTrackId === t.id && state.isPlaying;
+          return `
+            <div class="recent-card" onclick="toggleTrackById('${t.id}')" title="Ouvir ${t.title}">
+              <img src="${t.cover}" alt="${t.title}" onerror="this.src='https://placehold.co/120x120/2e003e/ffffff?text=CEUB'" />
+              <div class="rec-card-meta">
+                <span class="recent-card-title">${isPlayingThis ? '▶ ' : ''}${t.title}</span>
+                <span class="rec-card-sub">${t.artist} • ${t.category}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
       } else {
-        greetingEl.textContent = 'Trilhas para estudar, criar e focar no CEUB';
+        recSection.style.display = 'none';
       }
 
       const recentSection = document.getElementById('recentSection');
@@ -3031,14 +3076,35 @@
       const subEl = document.getElementById('librarySubtitle');
       const delBtn = document.getElementById('deleteCurrentPlaylistBtn');
       const container = document.getElementById('libraryContent');
+      const tabsEl = document.getElementById('libraryMenuTabs');
+
+      if (tabsEl) {
+        const likedCount = state.likedIds.map(id => getTrackById(id)).filter(Boolean).length;
+        let tabsHtml = `
+          <button class="chip-btn ${state.selectedLibraryTab === 'liked' ? 'active' : ''}" onclick="openLibraryTab('liked')">♥ Curtidas (${likedCount})</button>
+          <button class="chip-btn ${state.selectedLibraryTab === 'recommended' ? 'active' : ''}" onclick="openLibraryTab('recommended')">✨ Recomendadas</button>
+        `;
+        state.playlists.forEach(p => {
+          tabsHtml += `<button class="chip-btn ${state.selectedLibraryTab === p.id ? 'active' : ''}" onclick="openLibraryTab('${p.id}')">♫ ${p.name}</button>`;
+        });
+        tabsEl.innerHTML = tabsHtml;
+      }
 
       let trackList = [];
       let isCustomPlaylist = false;
+      let isRecommendedTab = false;
 
       if (state.selectedLibraryTab === 'liked') {
         trackList = state.likedIds.map(id => getTrackById(id)).filter(Boolean);
         titleEl.textContent = '♥ Músicas Curtidas';
         subEl.textContent = `${trackList.length} faixa(s) salva(s) nos seus favoritos`;
+        delBtn.style.display = 'none';
+      } else if (state.selectedLibraryTab === 'recommended') {
+        isRecommendedTab = true;
+        const unliked = state.tracks.filter(t => !state.likedIds.includes(t.id));
+        trackList = (unliked.length > 0 ? unliked : state.tracks).slice(0, 6);
+        titleEl.textContent = '✨ Músicas Recomendadas';
+        subEl.textContent = 'Sugestões selecionadas do catálogo sem copyright para você';
         delBtn.style.display = 'none';
       } else {
         const pl = state.playlists.find(p => p.id === state.selectedLibraryTab);
@@ -3099,7 +3165,10 @@
                 <td style="text-align: right;">
                   ${isCustomPlaylist
                     ? `<button class="icon-action" onclick="removeTrackFromPlaylist('${state.selectedLibraryTab}', '${t.id}')" title="Remover da playlist" style="display:inline-grid;">✕</button>`
-                    : `<button class="icon-action liked" onclick="toggleLikeTrack('${t.id}')" title="Remover dos favoritos" style="display:inline-grid;">♥</button>`
+                    : isRecommendedTab
+                      ? `<button class="icon-action ${state.likedIds.includes(t.id) ? 'liked' : ''}" onclick="toggleLikeTrack('${t.id}')" title="Favoritar" style="display:inline-grid;">${state.likedIds.includes(t.id) ? '♥' : '♡'}</button>
+                         <button class="icon-action" onclick="openAddToPlaylistModal('${t.id}')" title="Adicionar à playlist" style="display:inline-grid;">+</button>`
+                      : `<button class="icon-action liked" onclick="toggleLikeTrack('${t.id}')" title="Remover dos favoritos" style="display:inline-grid;">♥</button>`
                   }
                 </td>
               </tr>
@@ -3472,9 +3541,14 @@
       document.getElementById('cancelEditTrackBtn').addEventListener('click', resetManagerFormState);
 
       // Controles do Player
-      document.getElementById('heroPlayAllBtn').addEventListener('click', () => {
-        if (state.tracks.length > 0) playTrackById(state.tracks[0].id);
-      });
+      const refreshRecsBtn = document.getElementById('refreshRecsBtn');
+      if (refreshRecsBtn) {
+        refreshRecsBtn.addEventListener('click', () => {
+          state.recOffset = (state.recOffset + 3) % Math.max(1, state.tracks.length);
+          renderHome();
+        });
+      }
+
       document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
       document.getElementById('nextBtn').addEventListener('click', playNext);
       document.getElementById('prevBtn').addEventListener('click', playPrev);
