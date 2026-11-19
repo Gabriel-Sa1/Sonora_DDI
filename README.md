@@ -9,7 +9,6 @@
 Plataforma web responsiva de streaming de áudio livre de direitos autorais (*royalty-free* / Creative Commons), desenvolvida sob a identidade visual institucional do **Centro Universitário de Brasília (CEUB)** e projetada conforme as **10 Heurísticas de Usabilidade de Jakob Nielsen**.
 
 🔗 **Acesse a aplicação online:** [https://gabriel-sa1.github.io/Sonora_DDI/](https://gabriel-sa1.github.io/Sonora_DDI/)  
-📂 **Repositório oficial:** [https://github.com/Gabriel-Sa1/Sonora_DDI](https://github.com/Gabriel-Sa1/Sonora_DDI)
 
 ---
 
